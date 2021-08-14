@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
+import "firebase/database";
 import "firebase/auth";
 import "firebase/analytics";
 
@@ -14,6 +15,8 @@ import "firebase/analytics";
       messagingSenderId: "541842225098",
       appId: "1:541842225098:web:6bd95d74cb151d09160133",
       measurementId: "G-5BFJ5NTSBE",
+      databaseURL:
+        "https://divechat-ce397-default-rtdb.asia-southeast1.firebasedatabase.app/",
     })
   : firebase.app();
 
