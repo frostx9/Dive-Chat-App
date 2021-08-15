@@ -1,9 +1,12 @@
 import { useRef, useEffect, useState } from "react";
+import { useList } from "react-firebase-hooks/database";
 import { auth, firestore, firebase } from "../Firebase";
 
 const Chat = ({ data, room }) => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
+  const [snapshots] = useList(firebase.database().ref(`/online/${data?.uid}`));
+  const [presence, setPresence] = useState();
 
   useEffect(() => {
     if (room) {
@@ -17,6 +20,14 @@ const Chat = ({ data, room }) => {
         });
     }
   }, [room]);
+
+  useEffect(() => {
+    snapshots.map((v) => {
+      if (v.val()?.seconds)
+        setPresence((p) => `Last seen at ${new Date(v.val()?.seconds * 1000)}`);
+      else setPresence((p) => "online");
+    });
+  }, [snapshots]);
 
   const sendMessage = (e) => {
     e.preventDefault();
@@ -40,7 +51,7 @@ const Chat = ({ data, room }) => {
         {" "}
         <div className="row pt-2">
           <h3>{data?.displayName}</h3>
-          <span className="text-muted">{data?.presence}</span>
+          <span className="text-muted">{presence}</span>
         </div>
         <br />
         <div
