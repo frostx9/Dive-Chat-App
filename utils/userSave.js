@@ -3,7 +3,6 @@ import { auth, firestore } from "../Firebase";
 const userSave = () => {
   let displayName = auth.currentUser?.displayName;
   let uid = auth.currentUser?.uid;
-  console.log("user - ", displayName);
 
   firestore
     .collection("users")

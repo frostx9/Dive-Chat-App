@@ -6,7 +6,6 @@ const SignIn = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     await auth.signInWithPopup(provider);
     userSave();
-    console.log("inside sign in - ", auth.currentUser.displayName);
   };
 
   return (
