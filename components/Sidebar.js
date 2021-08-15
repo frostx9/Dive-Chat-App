@@ -10,6 +10,7 @@ const Sidebar = ({ user, handler }) => {
   const [snapshots] = useList(firebase.database().ref("/online"));
   const [presence, setPresence] = useState({});
 
+  // Generating list of users using this webapp with their online status
   let list = value?.docs.map((doc) => {
     doc = doc.data();
     let status =
@@ -40,6 +41,21 @@ const Sidebar = ({ user, handler }) => {
     );
   });
 
+  const signOut = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(
+        function () {
+          console.log("Signed Out");
+        },
+        function (error) {
+          console.error("Sign Out Error", error);
+        }
+      );
+  };
+
+  // This useEffect finds out who are online
   useEffect(() => {
     snapshots.map((v) => {
       if (v.val().online) setPresence((p) => ({ ...p, [v.key]: "online" }));
@@ -47,6 +63,7 @@ const Sidebar = ({ user, handler }) => {
     });
   }, [snapshots, value]);
 
+  // This useEffect tracks if an user is online or not
   useEffect(() => {
     const userId = auth.currentUser.uid;
 
@@ -67,8 +84,9 @@ const Sidebar = ({ user, handler }) => {
         className="d-flex flex-column align-items-stretch flex-shrink-0 bg-white"
         // style={{ width: "380px" }}
       >
-        <div className="d-flex align-items-center flex-shrink-0 p-4 link-dark text-decoration-none border-bottom">
+        <div className="d-flex justify-content-between align-items-center  p-4 link-dark text-decoration-none border-bottom">
           <span className="fs-5 fw-semibold">{user.displayName}</span>
+          <button onClick={signOut}>Sign out</button>
         </div>
         <div className="list-group list-group-flush border-bottom scrollarea">
           {list}

@@ -1,5 +1,7 @@
 import { auth, firestore, firebase } from "../Firebase";
 
+// This function changes status of a message sent to the use from single tick to double tick
+
 const changeStatus = () => {
   firestore
     .collection("pipeline")

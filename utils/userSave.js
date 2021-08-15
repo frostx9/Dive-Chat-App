@@ -1,5 +1,7 @@
 import { auth, firestore } from "../Firebase";
 
+// This function stores user information seperately when a user signs up
+
 const userSave = () => {
   let displayName = auth.currentUser?.displayName;
   let uid = auth.currentUser?.uid;

@@ -8,6 +8,7 @@ const Chat = ({ data, room }) => {
   const [snapshots] = useList(firebase.database().ref(`/online/${data?.uid}`));
   const [presence, setPresence] = useState();
 
+  // This useEffect generates messages in between two users
   useEffect(() => {
     if (room) {
       firestore
@@ -51,6 +52,7 @@ const Chat = ({ data, room }) => {
     }
   }, [room]);
 
+  // This useEffect checks if the receiver is online or not
   useEffect(() => {
     snapshots.map((v) => {
       if (v.val()?.seconds)

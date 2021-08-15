@@ -9,6 +9,7 @@ const Home = ({ user }) => {
   const [info, setInfo] = useState(null);
   const [room, setRoom] = useState(null);
 
+  // Setting up room information to render a chat between two users
   const handler = (obj) => {
     if (obj?.uid != undefined && auth.currentUser?.uid != undefined) {
       if (obj?.uid < auth.currentUser?.uid)
