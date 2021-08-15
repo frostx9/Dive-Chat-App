@@ -3,6 +3,7 @@ import { auth } from "../Firebase";
 import SignIn from "../components/SignIn";
 import Sidebar from "../components/Sidebar";
 import Chat from "../components/Chat";
+import changeStatus from "../utils/changeStatus";
 
 const Home = ({ user }) => {
   const [info, setInfo] = useState(null);
@@ -16,6 +17,10 @@ const Home = ({ user }) => {
     }
     setInfo(obj);
   };
+
+  useEffect(() => {
+    changeStatus();
+  });
   return (
     <div>
       {user ? (

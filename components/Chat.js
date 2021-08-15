@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from "react";
+import Image from "next/image";
 import { useList } from "react-firebase-hooks/database";
 import { auth, firestore, firebase } from "../Firebase";
 
@@ -16,7 +17,37 @@ const Chat = ({ data, room }) => {
         .collection("messages")
         .orderBy("timestamp", "asc")
         .onSnapshot((snapshot) => {
-          setMessages(snapshot.docs.map((doc) => doc.data()));
+          setMessages(
+            snapshot.docs.map((doc) => {
+              if (
+                (doc.data().status === "sent" ||
+                  doc.data().status === "received") &&
+                doc.data().receiverId === auth.currentUser?.uid
+              )
+                firestore
+                  .collection("chats")
+                  .doc(room)
+                  .collection("messages")
+                  .doc(doc.id)
+                  .update({
+                    status: "seen",
+                  });
+              if (
+                doc.data().status === "sent" &&
+                presence === "online" &&
+                doc.data().senderId === auth.currentUser?.uid
+              )
+                firestore
+                  .collection("chats")
+                  .doc(room)
+                  .collection("messages")
+                  .doc(doc.id)
+                  .update({
+                    status: "received",
+                  });
+              return { ...doc.data(), id: doc.id };
+            })
+          );
         });
     }
   }, [room]);
@@ -31,14 +62,28 @@ const Chat = ({ data, room }) => {
 
   const sendMessage = (e) => {
     e.preventDefault();
-    firestore.collection("chats").doc(room).collection("messages").add({
-      message: input,
-      senderId: auth.currentUser?.uid,
-      send: auth.currentUser?.displayName,
-      receiverId: data?.uid,
-      receiver: data?.displayName,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
+    let status = presence === "online" ? "received" : "sent";
+    firestore
+      .collection("chats")
+      .doc(room)
+      .collection("messages")
+      .add({
+        message: input,
+        senderId: auth.currentUser?.uid,
+        send: auth.currentUser?.displayName,
+        receiverId: data?.uid,
+        receiver: data?.displayName,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        status,
+      })
+      .then((doc) => {
+        if (presence !== "online")
+          firestore
+            .collection("pipeline")
+            .doc(data?.uid)
+            .collection("sent")
+            .add({ room, id: doc?.id });
+      });
 
     setInput("");
   };
@@ -68,12 +113,29 @@ const Chat = ({ data, room }) => {
               message.timestamp?.seconds * 1000
             ).getMinutes();
             return (
-              <div className="row" key={message.timestamp?.seconds}>
+              <div className="row" key={message.id}>
                 <div className={classname}>
                   <div className="text-primary">{message.message}</div>
-                  <span className="text-muted">
-                    {hour}:{minute}
-                  </span>
+                  <div className="p-2 d-flex flex-row-reverse">
+                    {" "}
+                    <span className="text-muted">
+                      {hour}:{minute}
+                    </span>
+                    <span>
+                      {" "}
+                      {message.senderId == auth.currentUser.uid ? (
+                        <Image
+                          className="pt-1"
+                          src={`/${message.status}.svg`}
+                          height={20}
+                          width={20}
+                          alt={message.status}
+                        />
+                      ) : (
+                        ""
+                      )}
+                    </span>
+                  </div>
                 </div>
               </div>
             );

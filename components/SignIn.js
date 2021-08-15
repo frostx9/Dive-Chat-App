@@ -9,10 +9,17 @@ const SignIn = () => {
   };
 
   return (
-    <div>
-      <button className="sign-in" onClick={signInWithGoogle}>
-        Sign in with Google
-      </button>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+        minHeight: "100vh",
+      }}
+    >
+      <button onClick={signInWithGoogle}>Sign in with Google</button>
     </div>
   );
 };
