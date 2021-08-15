@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from "react";
-import Image from "next/image";
 import { useList } from "react-firebase-hooks/database";
 import { auth, firestore, firebase } from "../Firebase";
 
@@ -124,7 +123,7 @@ const Chat = ({ data, room }) => {
                     <span>
                       {" "}
                       {message.senderId == auth.currentUser.uid ? (
-                        <Image
+                        <img
                           className="pt-1"
                           src={`/${message.status}.svg`}
                           height={20}
