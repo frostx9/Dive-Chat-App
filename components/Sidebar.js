@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { useList } from "react-firebase-hooks/database";
 import { firestore, auth, firebase } from "../Firebase";
@@ -9,6 +10,8 @@ const Sidebar = ({ user, handler }) => {
   });
   const [snapshots] = useList(firebase.database().ref("/online"));
   const [presence, setPresence] = useState({});
+
+  const router = useRouter();
 
   // Generating list of users using this webapp with their online status
   let list = value?.docs.map((doc) => {
@@ -48,6 +51,7 @@ const Sidebar = ({ user, handler }) => {
       .then(
         function () {
           console.log("Signed Out");
+          router.reload(window.location.pathname);
         },
         function (error) {
           console.error("Sign Out Error", error);
